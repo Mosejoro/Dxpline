@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dxpline — Profile</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Syne:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500&family=Inter:wght@400;500;600&family=Atkinson+Hyperlegible:wght@400;700&family=Poppins:wght@400;500;600&family=Nunito:wght@400;600;700&family=Merriweather:wght@400;700&family=IBM+Plex+Sans:wght@400;500;600&family=Comic+Neue:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Driver.js onboarding walkthrough — must load before style.css so our theme overrides win the cascade -->
+    <script src="https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.js.iife.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.css"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+      body {
+        background: var(--bg2);
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+      }
+      .prof-wrap {
+        max-width: 640px;
+        margin: 0 auto;
+        padding: 28px 24px 60px;
+      }
+      .prof-head {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        margin-bottom: 28px;
+      }
+      .prof-avatar-wrap {
+        position: relative;
+        flex-shrink: 0;
+      }
+      .prof-avatar {
+        width: 84px;
+        height: 84px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid var(--bdr2);
+      }
+      .prof-avatar-edit {
+        display: block;
+        font-family: var(--body);
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--tx);
+        text-align: center;
+        margin-top: 10px;
+        cursor: pointer;
+        background: var(--bg3);
+        border: 1px solid var(--bdr2);
+        border-radius: 999px;
+        padding: 6px 16px;
+      }
+      .prof-avatar-edit:hover {
+        background: var(--bg2);
+        border-color: var(--tx3);
+      }
+      .prof-name-row {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .prof-name-input {
+        font-family: var(--head);
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--tx);
+        background: transparent;
+        border: none;
+        border-bottom: 1px solid transparent;
+        padding: 2px 0;
+        width: 100%;
+      }
+      .prof-name-input:focus {
+        outline: none;
+        border-bottom: 1px solid var(--bdr2);
+      }
+      .prof-name-save {
+        font-family: var(--mono);
+        font-size: 10px;
+        text-transform: uppercase;
+        color: var(--tx3);
+        background: var(--bg3);
+        border: 1px solid var(--bdr2);
+        border-radius: 6px;
+        padding: 4px 10px;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      .prof-email {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--tx3);
+        margin-top: 4px;
+      }
+
+      .prof-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 12px;
+        margin-bottom: 24px;
+      }
+      .prof-card {
+        background: var(--bg3);
+        border: 1px solid var(--bdr2);
+        border-radius: 10px;
+        padding: 14px;
+      }
+      .prof-card-title {
+        font-family: var(--mono);
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--tx3);
+        margin-bottom: 6px;
+      }
+      .prof-card-num {
+        font-family: var(--head);
+        font-size: 26px;
+        font-weight: 700;
+        color: var(--tx);
+        line-height: 1;
+      }
+      .prof-card-sub {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--tx3);
+        margin-top: 4px;
+      }
+
+      .prof-section-title {
+        font-family: var(--mono);
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--tx3);
+        margin: 24px 0 10px;
+      }
+      .prof-xpbar {
+        height: 6px;
+        border-radius: 3px;
+        background: var(--bg);
+        overflow: hidden;
+        margin-top: 8px;
+      }
+      .prof-xpfill {
+        height: 100%;
+        background: var(--deep);
+        border-radius: 3px;
+      }
+
+      .prof-catrow {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--bdr2);
+        font-family: var(--body);
+        font-size: 13px;
+        color: var(--tx);
+      }
+      .prof-catrow:last-child {
+        border-bottom: none;
+      }
+      .prof-catrow span:last-child {
+        font-family: var(--mono);
+        color: var(--tx3);
+      }
+
+      .prof-signout {
+        width: 100%;
+        margin-top: 28px;
+        padding: 10px 0;
+        border-radius: 6px;
+        background: transparent;
+        border: 1px solid var(--resist-bg);
+        color: var(--resist);
+        font-family: var(--body);
+        font-size: 13px;
+        cursor: pointer;
+      }
+
+      .prof-fld label {
+        display: block;
+        font-family: var(--mono);
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--tx3);
+        margin-bottom: 4px;
+      }
+      .prof-fld input[type="time"] {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 8px 10px;
+        background: var(--bg);
+        border: 1px solid var(--bdr2);
+        border-radius: 6px;
+        color: var(--tx);
+        font-family: var(--body);
+        font-size: 13px;
+      }
+      .prof-fld select {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 8px 10px;
+        background: var(--bg);
+        border: 1px solid var(--bdr2);
+        border-radius: 6px;
+        color: var(--tx);
+        font-family: var(--body);
+        font-size: 13px;
+      }
+
+      .prof-switch {
+        position: relative;
+        display: inline-block;
+        width: 38px;
+        height: 22px;
+        flex-shrink: 0;
+      }
+      .prof-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .prof-switch-track {
+        position: absolute;
+        inset: 0;
+        background: var(--bdr2);
+        border-radius: 999px;
+        transition: background 0.2s ease;
+        cursor: pointer;
+      }
+      .prof-switch-track::before {
+        content: "";
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        left: 3px;
+        top: 3px;
+        background: var(--bg2);
+        border-radius: 50%;
+        transition: transform 0.2s ease;
+      }
+      .prof-switch input:checked + .prof-switch-track {
+        background: var(--deep);
+      }
+      .prof-switch input:checked + .prof-switch-track::before {
+        transform: translateX(16px);
+      }
+      .prof-helpbtn {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        z-index: 500;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: 1px solid var(--bdr2);
+        background: var(--bg2);
+        color: var(--tx3);
+        font-family: var(--mono);
+        font-size: 9px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        line-height: 1;
+      }
+      .prof-helpbtn:hover {
+        color: var(--tx);
+        border-color: var(--tx3);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="prof-wrap">
+      <button class="prof-helpbtn" id="profHelpBtn" title="Show walkthrough">
+        ?
+      </button>
+      <div class="prof-head" id="profHeadSection">
+        <div class="prof-avatar-wrap">
+          <img src="img/default.png" class="prof-avatar" id="profAvatar" />
+          <label class="prof-avatar-edit" for="profPhotoInput"
+            >Change photo</label
+          >
+          <input type="file" id="profPhotoInput" accept="image/*" hidden />
+        </div>
+        <div style="flex: 1">
+          <div class="prof-name-row">
+            <input
+              class="prof-name-input"
+              id="profName"
+              placeholder="Your name"
+            />
+            <button class="prof-name-save" id="profSaveName">Save</button>
+          </div>
+          <div class="prof-email" id="profEmail">—</div>
+        </div>
+      </div>
+
+      <div class="prof-grid" id="profStatsGrid">
+        <div class="prof-card">
+          <div class="prof-card-title">Longest Streak</div>
+          <div class="prof-card-num" id="profLongestNum">0</div>
+          <div class="prof-card-sub" id="profLongestRange">—</div>
+        </div>
+        <div class="prof-card">
+          <div class="prof-card-title">Current Streak</div>
+          <div class="prof-card-num" id="profCurrentNum">0</div>
+          <div class="prof-card-sub">day streak</div>
+        </div>
+        <div class="prof-card">
+          <div class="prof-card-title">Member Since</div>
+          <div class="prof-card-num" id="profJoined" style="font-size: 16px">
+            —
+          </div>
+        </div>
+      </div>
+
+      <div class="prof-section-title">Discipline Level</div>
+      <div class="prof-card" id="profLevelCard">
+        <div style="display: flex; justify-content: space-between">
+          <span
+            id="profLevelLbl"
+            style="font-family: var(--head); font-weight: 600"
+            >Lv 1</span
+          >
+          <span id="profXpLbl" class="prof-card-sub">0 XP</span>
+        </div>
+        <div class="prof-xpbar">
+          <div class="prof-xpfill" id="profXpFill" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <div class="prof-section-title">By Category</div>
+      <div class="prof-card" id="profCatRows"></div>
+
+      <div class="prof-section-title">Theme</div>
+      <div class="prof-card" id="profThemeCard">
+        <div class="prof-fld">
+          <label>Color theme</label>
+          <select id="themeSelect"></select>
+        </div>
+      </div>
+
+      <div class="prof-section-title">Reading Font</div>
+      <div class="prof-card" id="profFontCard">
+        <div class="prof-fld">
+          <label>App font</label>
+          <select id="fontSelect"></select>
+        </div>
+      </div>
+
+      <div class="prof-section-title">Daily Reminder</div>
+      <div class="prof-card" id="profReminderCard">
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+          "
+        >
+          <span
+            style="font-family: var(--body); font-size: 13px; color: var(--tx)"
+            >Enable reminder</span
+          >
+          <label class="prof-switch">
+            <input type="checkbox" id="remEnabled" />
+            <span class="prof-switch-track"></span>
+          </label>
+        </div>
+        <div class="prof-fld">
+          <label>Time</label>
+          <input type="time" id="remTime" value="20:00" />
+        </div>
+        <button
+          class="prof-name-save"
+          id="remSave"
+          style="margin-top: 10px; width: 100%; padding: 8px 0"
+        >
+          Save Reminder
+        </button>
+      </div>
+
+      <button class="prof-signout" id="profSignOut">Sign Out</button>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="js/cloudinary-upload.js"></script>
+    <script src="js/profile-shared.js"></script>
+    <script src="js/firestore-helpers.js"></script>
+    <script src="js/font.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/profile-full.js"></script>
+    <script src="js/profile-onboarding.js"></script>
+  </body>
+</html>

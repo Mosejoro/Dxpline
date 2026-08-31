@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dxpline — Friend's Board</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Syne:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500&family=Inter:wght@400;500;600&family=Atkinson+Hyperlegible:wght@400;700&family=Poppins:wght@400;500;600&family=Nunito:wght@400;600;700&family=Merriweather:wght@400;700&family=IBM+Plex+Sans:wght@400;500;600&family=Comic+Neue:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+      body {
+        background: var(--bg2);
+      }
+      .fb-wrap {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 28px 24px 60px;
+      }
+      .fb-back {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--tx3);
+        cursor: pointer;
+        display: inline-block;
+        margin-bottom: 20px;
+      }
+      .fb-back:hover {
+        color: var(--tx);
+      }
+      .fb-head {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 20px;
+      }
+      .fb-avatar {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--bdr2);
+        cursor: pointer;
+      }
+      .fb-name {
+        font-family: var(--head);
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--tx);
+      }
+      .fb-readonly-tag {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--tx3);
+      }
+      .fb-stats {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 24px;
+      }
+      .fb-stat {
+        flex: 1;
+        background: var(--bg3);
+        border: 1px solid var(--bdr2);
+        border-radius: 10px;
+        padding: 12px;
+        text-align: center;
+      }
+      .fb-stat-num {
+        font-family: var(--head);
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--tx);
+      }
+      .fb-stat-lbl {
+        font-family: var(--mono);
+        font-size: 9px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--tx3);
+        margin-top: 4px;
+      }
+      .fb-board {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+      }
+      @media (max-width: 800px) {
+        .fb-board {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      @media (max-width: 480px) {
+        .fb-board {
+          grid-template-columns: 1fr;
+        }
+      }
+      .fb-col {
+        background: var(--bg3);
+        border: 1px solid var(--bdr2);
+        border-radius: 10px;
+        padding: 10px;
+      }
+      .fb-col-hd {
+        display: flex;
+        justify-content: space-between;
+        font-family: var(--body);
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--tx);
+        margin-bottom: 8px;
+      }
+      .fb-error {
+        display: none;
+        font-family: var(--mono);
+        font-size: 13px;
+        color: var(--resist);
+        text-align: center;
+        padding: 60px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="fb-wrap">
+      <span class="fb-back" onclick="location.href = 'users.html'"
+        >← Back to Users</span
+      >
+
+      <div class="fb-error" id="fbError">
+        Couldn't load this board — you may not be connected as friends, or they
+        haven't accepted your request yet.
+      </div>
+
+      <div id="fbContent">
+        <div class="fb-head">
+          <img
+            src="img/default.png"
+            class="fb-avatar"
+            id="fbAvatar"
+            onclick="showImageLightbox(this.src)"
+          />
+          <div>
+            <div class="fb-name" id="fbName">—</div>
+            <div class="fb-readonly-tag">Viewing (read-only)</div>
+          </div>
+        </div>
+
+        <div class="fb-stats">
+          <div class="fb-stat">
+            <div class="fb-stat-num" id="fbStreak">0</div>
+            <div class="fb-stat-lbl">streak</div>
+          </div>
+          <div class="fb-stat">
+            <div class="fb-stat-num" id="fbLevel">Lv 1</div>
+            <div class="fb-stat-lbl">level</div>
+          </div>
+          <div class="fb-stat">
+            <div class="fb-stat-num" id="fbXp">0 XP</div>
+            <div class="fb-stat-lbl">experience</div>
+          </div>
+        </div>
+
+        <div class="fb-board">
+          <div class="fb-col">
+            <div class="fb-col-hd">
+              <span>Easy Mode</span><span id="fb-cnt-quick"></span>
+            </div>
+            <div id="fb-body-quick"></div>
+          </div>
+          <div class="fb-col">
+            <div class="fb-col-hd">
+              <span>Moderately Hard</span><span id="fb-cnt-moderate"></span>
+            </div>
+            <div id="fb-body-moderate"></div>
+          </div>
+          <div class="fb-col">
+            <div class="fb-col-hd">
+              <span>Deep Workings</span><span id="fb-cnt-deep"></span>
+            </div>
+            <div id="fb-body-deep"></div>
+          </div>
+          <div class="fb-col">
+            <div class="fb-col-hd">
+              <span>Hard Tasks</span><span id="fb-cnt-resist"></span>
+            </div>
+            <div id="fb-body-resist"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="cordova.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <script src="js/firebase-init.js"></script>
+    <script src="js/auth-guard.js"></script>
+    <script src="js/profile-shared.js"></script>
+    <script src="js/firestore-helpers.js"></script>
+    <script src="js/font.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/image-lightbox.js"></script>
+    <script src="js/friend-board.js"></script>
+  </body>
+</html>

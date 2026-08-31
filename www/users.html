@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dxpline — Users</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Syne:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500&family=Inter:wght@400;500;600&family=Atkinson+Hyperlegible:wght@400;700&family=Poppins:wght@400;500;600&family=Nunito:wght@400;600;700&family=Merriweather:wght@400;700&family=IBM+Plex+Sans:wght@400;500;600&family=Comic+Neue:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+      body {
+        background: var(--bg2);
+      }
+      .users-wrap {
+        max-width: 640px;
+        margin: 0 auto;
+        padding: 28px 24px 60px;
+      }
+      .users-back {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--tx3);
+        cursor: pointer;
+        display: inline-block;
+        margin-bottom: 20px;
+      }
+      .users-back:hover {
+        color: var(--tx);
+      }
+      .users-title {
+        font-family: var(--head);
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--tx);
+        margin-bottom: 16px;
+      }
+      .users-search {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px 14px;
+        border-radius: 8px;
+        border: 1px solid var(--bdr2);
+        background: var(--bg3);
+        color: var(--tx);
+        font-family: var(--body);
+        font-size: 14px;
+        margin-bottom: 8px;
+      }
+      .users-section-title {
+        font-family: var(--mono);
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--tx3);
+        margin: 24px 0 10px;
+      }
+      .user-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--bdr2);
+      }
+      .user-row:last-child {
+        border-bottom: none;
+      }
+      .user-row-unread {
+        background: var(--deep-bg);
+        border-radius: 8px;
+        padding-left: 8px;
+        padding-right: 8px;
+        margin: 0 -8px;
+      }
+      .user-row-btn-chat {
+        position: relative;
+      }
+      .user-row-badge {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        min-width: 16px;
+        height: 16px;
+        padding: 0 4px;
+        border-radius: 999px;
+        background: var(--resist);
+        color: #fff;
+        font-family: var(--mono);
+        font-size: 9px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+      }
+      .user-row-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 1px solid var(--bdr2);
+        flex-shrink: 0;
+        cursor: pointer;
+      }
+      .user-row-info {
+        flex: 1;
+        min-width: 0;
+      }
+      .user-row-name {
+        font-family: var(--body);
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--tx);
+        overflow-wrap: break-word;
+      }
+      .user-row-email {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--tx3);
+        overflow-wrap: break-word;
+      }
+      .user-row-actions {
+        display: flex;
+        gap: 6px;
+        flex-shrink: 0;
+      }
+      .user-row-btn {
+        padding: 6px 14px;
+        border-radius: 999px;
+        border: 1px solid var(--bdr2);
+        background: var(--tx);
+        color: var(--bg);
+        font-family: var(--body);
+        font-size: 12px;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      .user-row-btn-ghost {
+        background: transparent;
+        color: var(--tx3);
+      }
+      .users-empty {
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--tx3);
+        padding: 12px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="users-wrap">
+      <span class="users-back" onclick="location.href='index.html'">← Back</span>
+      <div class="users-title">Users</div>
+      <input
+        type="text"
+        id="userSearch"
+        class="users-search"
+        placeholder="Search by email or name…"
+      />
+
+      <div class="users-section-title">Your Friends</div>
+      <div id="friendsList"></div>
+
+      <div class="users-section-title">All Users</div>
+      <div id="usersList"></div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="cordova.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <script src="js/firebase-init.js"></script>
+    <script src="js/auth-guard.js"></script>
+    <script src="js/profile-shared.js"></script>
+    <script src="js/firestore-helpers.js"></script>
+    <script src="js/font.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/image-lightbox.js"></script>
+    <script src="js/friends.js"></script>
+  </body>
+</html>

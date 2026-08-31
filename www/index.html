@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dxpline — Discipline Tracker</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Syne:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500&family=Inter:wght@400;500;600&family=Atkinson+Hyperlegible:wght@400;700&family=Poppins:wght@400;500;600&family=Nunito:wght@400;600;700&family=Merriweather:wght@400;700&family=IBM+Plex+Sans:wght@400;500;600&family=Comic+Neue:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Driver.js onboarding walkthrough -->
+    <script src="https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.js.iife.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.css"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <!-- Cordova bootstrap — must load first for deviceready/native plugins to work -->
+    <script src="cordova.js"></script>
+    <!-- Firebase (compat build) + auth guard — must load before script.js -->
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <script src="js/firebase-init.js"></script>
+    <script src="js/auth-guard.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/back-button.js"></script>
+  </head>
+  <body>
+    <div id="appLoading" class="app-loading">
+      <div class="app-loading-text">Syncing your data…</div>
+    </div>
+
+    <div id="topbar">
+      <div class="wm">Dx<em>pline</em></div>
+      <div class="dpill" title="Discipline Score">
+        <span
+          style="
+            font-size: 9px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--tx3);
+          "
+          >PG</span
+        >
+        <span class="dpill-n" id="dsn">0</span>
+        <div class="dpill-bar">
+          <div class="dpill-fill" id="dsb" style="width: 0%"></div>
+        </div>
+      </div>
+      <div class="vseg">
+        <button class="on" onclick="setView('today', this)">Today</button>
+        <button onclick="setView('week', this)">Week</button>
+      </div>
+      <div class="sbox" style="display: none">
+        <svg
+          class="sico"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <circle cx="11" cy="11" r="8" />
+          <path d="m21 21-4.35-4.35" />
+        </svg>
+        <input id="search" placeholder="Search tasks…" oninput="renderAll()" />
+      </div>
+      <div class="dlbl" id="dlbl"></div>
+      <button class="helpbtn" id="usersBtn" title="Users" onclick="location.href='users.html'">👥</button>
+      <button class="helpbtn" id="helpBtn" title="Show walkthrough">?</button>
+    </div>
+
+    <div id="shell">
+      <!-- LEFT -->
+      <div id="left">
+        <div class="ph">New Task</div>
+        <div class="lscroll">
+          <div class="fld" id="Task">
+            <label>Task</label>
+            <input
+              id="ti"
+              class="First-Hint"
+              placeholder="Write down your Tasks"
+              onkeydown="if (event.key === 'Enter') addTask();"
+            />
+          </div>
+          <div class="fld" id="Cat">
+            <label>Category</label>
+            <div class="cgrid">
+              <button class="cgbtn" data-c="quick" onclick="selCat('quick')">
+                Easy Mode
+              </button>
+              <button
+                class="cgbtn"
+                data-c="moderate"
+                onclick="selCat('moderate')"
+              >
+                Moderately Hard
+              </button>
+              <button class="cgbtn" data-c="deep" onclick="selCat('deep')">
+                Deep Workings
+              </button>
+              <button class="cgbtn" data-c="resist" onclick="selCat('resist')">
+                Hard Tasks
+              </button>
+            </div>
+          </div>
+          <div class="fld" style="display: none">
+            <label>Time Estimate</label>
+            <select id="tsel">
+              <option value="">None</option>
+              <option>5m</option>
+              <option>15m</option>
+              <option>30m</option>
+              <option>1h</option>
+              <option>2h</option>
+              <option>3h+</option>
+            </select>
+          </div>
+          <div class="rflags">
+            <label class="fchip" id="uchip">
+              <input
+                type="checkbox"
+                id="ucb"
+                onchange="
+                  this.closest('.fchip').classList.toggle('on', this.checked)
+                "
+              />
+              ⚑ Urgent
+            </label>
+          </div>
+          <button class="addbtn" id="addBtn" onclick="addTask()">
+            + Add Task
+          </button>
+          <div class="div" style="margin: 0"></div>
+          <div class="xpblk">
+            <div class="xptop">
+              <span class="xptitle">Discipline Level</span>
+              <span class="xplvl" id="xplvl">Lv 1</span>
+            </div>
+            <div class="xpbg">
+              <div
+                class="xpfill"
+                id="xpfill"
+                style="width: 0%; background: var(--deep)"
+              ></div>
+            </div>
+            <div class="xpsub" id="xpsub">0 / 20 XP to next level</div>
+          </div>
+          <div class="strow">
+            <div class="stfire">
+              <img
+                width="48"
+                height="48"
+                src="https://img.icons8.com/color/48/fire-element--v1.png"
+                alt="fire-element--v1"
+              />
+            </div>
+            <div>
+              <div class="stnum" id="stnum">0</div>
+              <div class="stlbl">day streak</div>
+            </div>
+            <div
+              style="
+                margin-left: auto;
+                font-family: var(--mono);
+                font-size: 9px;
+                color: var(--tx3);
+                text-align: right;
+                line-height: 1.7;
+              "
+              id="stsub"
+            >
+              —
+            </div>
+          </div>
+          <div class="sig" id="lsig">
+            <div class="sigtag note" id="lsigtag">observation</div>
+            <div class="sigtext" id="lsigtext">
+              Add your first task to begin.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOARD -->
+      <div id="board">
+        <div class="col col-quick">
+          <div class="colhd">
+            <div class="coltop">
+              <span class="colname">Easy Mode</span
+              ><span class="colcnt" id="cnt-quick"></span>
+            </div>
+            <div class="colstr"></div>
+          </div>
+          <div
+            class="colbody"
+            id="body-quick"
+            ondragover="dov(event, 'quick')"
+            ondragleave="(e) => e.currentTarget.classList.remove('dov')"
+            ondrop="dop(event, 'quick')"
+          ></div>
+        </div>
+        <div class="col col-mod">
+          <div class="colhd">
+            <div class="coltop">
+              <span class="colname">Moderately Hard</span
+              ><span class="colcnt" id="cnt-moderate"></span>
+            </div>
+            <div class="colstr"></div>
+          </div>
+          <div
+            class="colbody"
+            id="body-moderate"
+            ondragover="dov(event, 'moderate')"
+            ondragleave="(e) => e.currentTarget.classList.remove('dov')"
+            ondrop="dop(event, 'moderate')"
+          ></div>
+        </div>
+        <div class="col col-deep">
+          <div class="colhd">
+            <div class="coltop">
+              <span class="colname">Deep Workings</span
+              ><span class="colcnt" id="cnt-deep"></span>
+            </div>
+            <div class="colstr"></div>
+          </div>
+          <div
+            class="colbody"
+            id="body-deep"
+            ondragover="dov(event, 'deep')"
+            ondragleave="(e) => e.currentTarget.classList.remove('dov')"
+            ondrop="dop(event, 'deep')"
+          ></div>
+        </div>
+        <div class="col col-resist">
+          <div class="colhd">
+            <div class="coltop">
+              <span class="colname">Hard Tasks</span
+              ><span class="colcnt" id="cnt-resist"></span>
+            </div>
+            <div class="colstr"></div>
+          </div>
+          <div
+            class="colbody"
+            id="body-resist"
+            ondragover="dov(event, 'resist')"
+            ondragleave="(e) => e.currentTarget.classList.remove('dov')"
+            ondrop="dop(event, 'resist')"
+          ></div>
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <div id="right">
+        <div class="slbl">Today's Progress</div>
+        <div class="trio">
+          <div class="tcard">
+            <div class="tnum" id="rdone">0</div>
+            <div class="tsub">done</div>
+          </div>
+          <div class="tcard">
+            <div class="tnum" id="rpend">0</div>
+            <div class="tsub">pending</div>
+          </div>
+          <div class="tcard">
+            <div class="tnum" id="rxp">0</div>
+            <div class="tsub" style="color: var(--deep)">xp today</div>
+          </div>
+        </div>
+        <div class="pwrap">
+          <div class="plbl">
+            <span>Completion</span><span id="pctlbl">0%</span>
+          </div>
+          <div class="pbar">
+            <div class="pfill" id="pctbar" style="width: 0%"></div>
+          </div>
+        </div>
+        <div class="div"></div>
+        <div class="slbl">Hard Tasks Meter</div>
+        <div class="rm">
+          <div class="rmtag">WEEKLY</div>
+          <div class="rmfill" id="rmf" style="width: 0%">
+            <span class="rmn" id="rmn">0</span>
+          </div>
+        </div>
+        <div
+          style="font-family: var(--mono); font-size: 10px; color: var(--tx3)"
+          id="rmsub"
+        >
+          No hard tasks completed this week.
+        </div>
+        <div class="div"></div>
+        <div class="slbl">By Category</div>
+        <div class="catrows" id="catrows"></div>
+        <div class="div"></div>
+        <div class="slbl">Hard Tasks Heatmap</div>
+        <div class="hmd">
+          <div>M</div>
+          <div>T</div>
+          <div>W</div>
+          <div>T</div>
+          <div>F</div>
+          <div>S</div>
+          <div>S</div>
+        </div>
+        <div class="hmg" id="hmg"></div>
+        <div class="hmnote">
+          Hard tasks avoidance · 4 weeks · darker = more avoided
+        </div>
+        <div class="div"></div>
+        <div class="slbl">Weekly Reflection</div>
+        <div class="refl" id="refl"></div>
+        <div class="div"></div>
+        <div class="slbl">Behavioral Signal</div>
+        <div class="sig">
+          <div class="sigtag note" id="sigtag">observation</div>
+          <div class="sigtext" id="sigtext">
+            Start adding tasks — your patterns will emerge.
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Profile Avatar (bottom-right) -->
+    <div class="profile-floating" id="profileBtn">
+      <img src="img/default.png" alt="Profile" id="profileAvatar" />
+    </div>
+
+    <!-- Profile Side Panel -->
+    <div class="pp-overlay" id="ppOverlay"></div>
+    <div class="profile-panel" id="profilePanel">
+      <div class="pp-head">
+        <button class="pp-icon-btn" id="ppExpand" title="Expand">⤢</button>
+        <button class="pp-icon-btn" id="ppClose" title="Close">✕</button>
+      </div>
+
+      <!-- Compact view: read-only glance at avatar/name/streak, shown when docked to the side -->
+      <div class="pp-compact" id="ppCompact">
+        <div class="pp-avatar-wrap">
+          <img src="img/default.png" class="pp-avatar" id="ppAvatar" />
+        </div>
+
+        <div class="pp-name-display" id="ppNameDisplay">—</div>
+        <div class="pp-email-display" id="ppEmailDisplay"></div>
+        <div class="pp-hint">Tap ⤢ to edit or see more</div>
+
+        <div class="div"></div>
+
+        <div class="pp-stats-row">
+          <div class="pp-stat">
+            <div class="pp-stat-num" id="ppCurrentStreak">0</div>
+            <div class="pp-stat-lbl">current streak</div>
+          </div>
+          <div class="pp-stat">
+            <div class="pp-stat-num" id="ppLevelNum">1</div>
+            <div class="pp-stat-lbl">level</div>
+          </div>
+        </div>
+        <div class="pp-xpbar">
+          <div class="pp-xpfill" id="ppXpFill" style="width: 0%"></div>
+        </div>
+        <div class="pp-xplbl" id="ppXpLbl">0 XP</div>
+
+        <div class="div"></div>
+
+        <div class="pp-section-title">Longest Streak</div>
+        <div class="pp-streak-num" id="ppStreakNum">0</div>
+        <div class="pp-streak-range" id="ppStreakRange">—</div>
+      </div>
+
+      <!-- Full view: loading splash, then profile.html in an iframe, shown when expanded -->
+      <div class="pp-loader" id="ppLoader">
+        <img src="img/Dxpline.png" class="pp-loader-img" alt="" />
+        <div class="pp-loader-text">Loading profile…</div>
+      </div>
+      <iframe class="pp-frame" id="ppFrame" title="Profile"></iframe>
+    </div>
+
+    <div class="toast" id="toast"></div>
+    <script src="js/cloudinary-upload.js"></script>
+    <script src="js/profile-shared.js"></script>
+    <script src="js/firestore-helpers.js"></script>
+    <script src="js/font.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/reminder.js"></script>
+    <script src="js/chat-notify.js"></script>
+    <script src="js/cloud-sync.js"></script>
+  </body>
+</html>

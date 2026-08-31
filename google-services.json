@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "434263531950",
+    "project_id": "dxpline-app",
+    "storage_bucket": "dxpline-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:434263531950:android:49da79f91e559269f9e83f",
+        "android_client_info": {
+          "package_name": "com.mosejoro.myapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "434263531950-5h4oak54m9o28rok3s82oahrtr3miasc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mosejoro.myapp",
+            "certificate_hash": "88ad24c9e3e7482db3799fcf8d9cf845748a25f4"
+          }
+        },
+        {
+          "client_id": "434263531950-kjje4sktda12mo5u1hpqbo2acohpfvnd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB73tyQ-JMabBU5zwUg87nt2MuLgKYjUzQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "434263531950-kjje4sktda12mo5u1hpqbo2acohpfvnd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
