@@ -4,6 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dxpline — Discipline Tracker</title>
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#0a7cff" />
+    <script>
+      if ("serviceWorker" in navigator)
+        navigator.serviceWorker.register("/sw.js");
+    </script>
     <link
       href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Syne:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500&family=Inter:wght@400;500;600&family=Atkinson+Hyperlegible:wght@400;700&family=Poppins:wght@400;500;600&family=Nunito:wght@400;600;700&family=Merriweather:wght@400;700&family=IBM+Plex+Sans:wght@400;500;600&family=Comic+Neue:wght@400;700&display=swap"
       rel="stylesheet"
@@ -66,7 +72,14 @@
         <input id="search" placeholder="Search tasks…" oninput="renderAll()" />
       </div>
       <div class="dlbl" id="dlbl"></div>
-      <button class="helpbtn" id="usersBtn" title="Users" onclick="location.href='users.html'">👥</button>
+      <button
+        class="helpbtn"
+        id="usersBtn"
+        title="Users"
+        onclick="location.href = 'users.html'"
+      >
+        👥
+      </button>
       <button class="helpbtn" id="helpBtn" title="Show walkthrough">?</button>
     </div>
 
@@ -385,5 +398,28 @@
     <script src="js/reminder.js"></script>
     <script src="js/chat-notify.js"></script>
     <script src="js/cloud-sync.js"></script>
+    <button id="installBtn" style="display: none">Install App</button>
+
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/sw.js");
+      }
+
+      let deferredPrompt;
+      window.addEventListener("beforeinstallprompt", (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        document.getElementById("installBtn").style.display = "block";
+      });
+
+      document
+        .getElementById("installBtn")
+        .addEventListener("click", async () => {
+          deferredPrompt.prompt();
+          await deferredPrompt.userChoice;
+          deferredPrompt = null;
+          document.getElementById("installBtn").style.display = "none";
+        });
+    </script>
   </body>
 </html>

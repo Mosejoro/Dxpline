@@ -4,6 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dxpline — Sign In</title>
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#0a7cff" />
+    <script>
+      if ("serviceWorker" in navigator)
+        navigator.serviceWorker.register("/sw.js");
+    </script>
     <link
       href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Syne:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap"
       rel="stylesheet"
@@ -258,6 +264,29 @@
           .getElementById(which === "signin" ? "tabSignIn" : "tabSignUp")
           .classList.add("on");
       }
+    </script>
+    <button id="installBtn" style="display: none">Install App</button>
+
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/sw.js");
+      }
+
+      let deferredPrompt;
+      window.addEventListener("beforeinstallprompt", (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        document.getElementById("installBtn").style.display = "block";
+      });
+
+      document
+        .getElementById("installBtn")
+        .addEventListener("click", async () => {
+          deferredPrompt.prompt();
+          await deferredPrompt.userChoice;
+          deferredPrompt = null;
+          document.getElementById("installBtn").style.display = "none";
+        });
     </script>
   </body>
 </html>
